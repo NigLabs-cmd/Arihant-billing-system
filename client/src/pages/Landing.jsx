@@ -30,7 +30,7 @@ const FEATURES = [
   {
     num: "04",
     title: "Recurring invoices",
-    body: "Set a retainer once — weekly, monthly, quarterly, yearly — and BillItUp raises the next invoice on schedule, on its own.",
+    body: "Set a retainer once — weekly, monthly, quarterly, yearly — and TradeLedger raises the next invoice on schedule, on its own.",
   },
   {
     num: "05",
@@ -50,11 +50,11 @@ export default function Landing() {
       <header className="site">
         <div className="wrap site-nav">
           <a className="brand" href="#top">
-            <img src="/logo-header.png" alt="BillItUp" />
+            <img src="/tradeledger-logo.svg" alt="TradeLedger" />
           </a>
           <nav className="links">
             <a href="#features">Features</a>
-            <a href="#compare">Why BillItUp</a>
+            <a href="#compare">Why TradeLedger</a>
             <a href={GITHUB_URL} target="_blank" rel="noreferrer">GitHub</a>
           </nav>
           <div className="cta">
@@ -70,8 +70,7 @@ export default function Landing() {
             <span className="eyebrow">Open source &middot; Self-hosted &middot; MIT licensed</span>
             <h1>Invoicing built for how agencies actually bill — <em>not how shops do.</em></h1>
             <p className="lead">
-              BillItUp is free, open-source invoicing for corporates, consultants and agencies: GST-ready
-              A4 invoices, quotes, credit notes and recurring retainers.
+              TradeLedger helps oil-trading businesses manage sales billing and transaction records.
             </p>
             <div className="actions">
               <Link className="btn btn-primary" to="/signup">Sign up &mdash; it's free</Link>
@@ -79,8 +78,7 @@ export default function Landing() {
             </div>
             <p className="trust">
               Open source <span className="dot">&middot;</span> MIT licensed{" "}
-              <span className="dot">&middot;</span> self-host it, or use it hosted right here{" "}
-              <span className="dot">&middot;</span> billitup.in
+              <span className="dot">&middot;</span> self-host it on your own server
             </p>
           </div>
 
@@ -158,12 +156,12 @@ export default function Landing() {
         <section id="compare">
           <div className="wrap">
             <div className="section-head">
-              <span className="eyebrow">Why BillItUp</span>
+              <span className="eyebrow">Why TradeLedger</span>
               <h2>Most billing software is built for the shop counter.</h2>
               <p>
                 Vyapar, and tools like it, are excellent for retail — thermal receipts, stock counts, a
-                till. BillItUp is built for the other half of Indian business: agencies, consultants, and
-                small companies who send a proper A4 invoice and get paid by bank transfer.
+                till. TradeLedger is tailored to oil traders who need to record purchases, manage customers,
+                and issue sales invoices.
               </p>
             </div>
             <div className="compare">
@@ -177,7 +175,7 @@ export default function Landing() {
                 </ul>
               </div>
               <div className="col you">
-                <div className="col-head">BillItUp</div>
+                <div className="col-head">TradeLedger</div>
                 <ul>
                   <li>Free, MIT licensed</li>
                   <li>Self-hosted — your data stays on your server</li>
@@ -209,7 +207,7 @@ export default function Landing() {
         <div className="wrap">
           <div className="brand">
             <img src="/logo-icon-512.png" alt="" />
-            BillItUp &mdash; open-source invoicing for corporates, agencies &amp; consultants.
+            TradeLedger &mdash; billing and transaction records for oil trading.
           </div>
           <div className="links">
             <a href={GITHUB_URL} target="_blank" rel="noreferrer">GitHub</a>

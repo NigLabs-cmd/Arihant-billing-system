@@ -8,7 +8,7 @@
 // the business that connected the account, safe even if BillItUp later
 // hosts unrelated businesses on the same install. It only covers a
 // business's own billing records, not internal/operational rows like staff
-// logins or suggestions, and it never includes a password hash of any kind.
+// operational user records, and it never includes a password hash of any kind.
 import { db } from "../db.js";
 
 function idsOf(rows) {
@@ -55,7 +55,7 @@ export function buildBusinessExport(businessId) {
 
   return {
     exported_at: new Date().toISOString(),
-    exported_by: "BillItUp cloud backup",
+    exported_by: "TradeLedger cloud backup",
     business: safeBusiness,
     customers,
     items,
@@ -78,5 +78,5 @@ export function buildBusinessExportFilename(business) {
   const pad = (n) => String(n).padStart(2, "0");
   const stamp = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
   const safeName = (business.name || "business").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "business";
-  return `billitup-${safeName}-${stamp}.json`;
+  return `tradeledger-${safeName}-${stamp}.json`;
 }

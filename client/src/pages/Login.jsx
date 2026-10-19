@@ -38,7 +38,7 @@ export default function Login() {
     <div className="login-shell">
       <div className="login-brand-panel">
         <div className="login-brand-mark">
-          <img src="/logo-header.png" alt="BillItUp" />
+          <img src="/tradeledger-logo.svg" alt="TradeLedger" />
         </div>
 
         <h2 className="login-brand-tagline">
@@ -77,7 +77,7 @@ export default function Login() {
 
       <div className="login-form-panel">
         <form className="login-form-card" onSubmit={handleSubmit}>
-          <h1>Log in to BillItUp</h1>
+          <h1>Log in to TradeLedger</h1>
           <p className="login-subtitle">Enter your details to access your business.</p>
 
           {expired && !error && (
@@ -113,9 +113,9 @@ export default function Login() {
 
           <Link to="/forgot-password" className="login-forgot-link">Forgot your password?</Link>
 
-          <div className="login-divider"><span>New to BillItUp?</span></div>
+          <div className="login-divider"><span>New to TradeLedger?</span></div>
 
-          <Link to="/signup" className="login-signup-cta">Set up BillItUp</Link>
+          <Link to="/signup" className="login-signup-cta">Set up TradeLedger</Link>
         </form>
       </div>
     </div>

@@ -24,7 +24,7 @@ export default function PublicInvoiceView() {
   return (
     <div className="public-invoice-page">
       <div className="no-print public-invoice-toolbar">
-        <img src="/logo-header.png" alt="BillItUp" />
+        <img src="/tradeledger-logo.svg" alt="TradeLedger" />
         <a href={api.publicInvoicePdfUrl(token)} target="_blank" rel="noreferrer">
           <button type="button">Download PDF</button>
         </a>

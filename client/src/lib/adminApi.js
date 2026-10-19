@@ -48,10 +48,6 @@ export const adminApi = {
   getBusinessUsers: (businessId) => adminRequest(`/api/admin/businesses/${businessId}/users`),
   setPlan: (businessId, plan) => adminRequest("/api/admin/set-plan", { method: "POST", body: { businessId, plan } }),
   getStats: () => adminRequest("/api/admin/stats"),
-  listSuggestions: () => adminRequest("/api/admin/suggestions"),
-  setSuggestionStatus: (id, status) => adminRequest(`/api/admin/suggestions/${id}/status`, { method: "PUT", body: { status } }),
-  deleteSuggestion: (id) => adminRequest(`/api/admin/suggestions/${id}`, { method: "DELETE" }),
-
   // The "doctor's chart" for one business — technical errors tied to their
   // requests, never their client data. See routes/admin.js for what's kept
   // out on purpose.

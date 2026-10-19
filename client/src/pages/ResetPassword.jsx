@@ -43,7 +43,7 @@ export default function ResetPassword() {
   return (
     <div className="simple-auth-shell">
       <div className="simple-auth-card">
-        <img src="/logo-header.png" alt="BillItUp" className="simple-auth-logo" />
+        <img src="/tradeledger-logo.svg" alt="TradeLedger" className="simple-auth-logo" />
 
         {done ? (
           <div className="simple-auth-success">

@@ -25,7 +25,7 @@ const ALL_STEPS = [
     path: "/",
     element: "[data-tour='dashboard-welcome']",
     popover: {
-      title: "Welcome to BillItUp",
+      title: "Welcome to TradeLedger",
       description:
         "A quick tour of the essentials before you send your first invoice. You can close this anytime and pick it up again later from Support.",
       side: "bottom",

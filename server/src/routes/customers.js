@@ -133,7 +133,7 @@ router.post("/:id/restore", requireRole("owner", "admin"), (req, res) => {
 // customer already soft deleted above. Foreign keys are enforced (db.js
 // turns them on) and several tables reference customers(id) with no cascade
 // (invoices, quotes, credit_notes, purchases.billable_customer_id,
-// retainer_transactions, time_entries) — so a customer who's ever been
+// retainer_transactions, and legacy time_entries) — so a customer who's ever been
 // billed, quoted, or logged against can't actually be permanently deleted;
 // the query below throws instead. Caught here and turned into an honest
 // message rather than a generic 500 (2026-09-20).
@@ -147,7 +147,7 @@ router.delete("/:id/permanent", requireRole("owner", "admin"), (req, res) => {
   } catch (err) {
     if (err.code === "SQLITE_CONSTRAINT_FOREIGNKEY") {
       return res.status(409).json({
-        error: "This customer has invoices, quotes, credit notes, or purchases on file, so they can't be permanently deleted, that would break those existing records. Edit their details instead if something needs correcting.",
+        error: "This customer has invoices, quotes, credit notes, purchases, or legacy time records on file, so they can't be permanently deleted without breaking those existing records. Edit their details instead if something needs correcting.",
       });
     }
     throw err;

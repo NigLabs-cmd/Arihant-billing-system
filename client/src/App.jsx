@@ -3,9 +3,8 @@ import { Routes, Route, Navigate, Link, NavLink, useNavigate } from "react-route
 import {
   IconDashboard, IconQuote, IconCreditNote, IconRecurring,
   IconCustomers, IconItems, IconReports, IconSettings, IconLogout, IconChevron,
-  IconVendors, IconPurchases, IconPayments, IconSuggestion, IconChat, IconClock, IconTrash,
+  IconVendors, IconPurchases, IconPayments, IconChat, IconTrash,
 } from "./components/Icons";
-import SuggestionBox from "./components/SuggestionBox";
 import AnnouncementPopup from "./components/AnnouncementPopup";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
@@ -35,9 +34,7 @@ import PortalDashboard from "./pages/PortalDashboard";
 import PaymentsTimeline from "./pages/PaymentsTimeline";
 import Vendors from "./pages/Vendors";
 import Purchases from "./pages/Purchases";
-import TimeTracking from "./pages/TimeTracking";
 import Reports from "./pages/Reports";
-import Suggestions from "./pages/Suggestions";
 import Support from "./pages/Support";
 import Settings from "./pages/Settings";
 import AdminLogin from "./pages/AdminLogin";
@@ -75,12 +72,10 @@ const NAV_ITEMS = [
   { to: "/payments", label: "Payments", icon: IconPayments, ownerOnly: true },
   { to: "/vendors", label: "Vendors", icon: IconVendors, ownerOnly: true },
   { to: "/purchases", label: "Purchases", icon: IconPurchases, ownerOnly: true },
-  { to: "/time-tracking", label: "Time Tracking", icon: IconClock },
   { to: "/customers", label: "Customers", icon: IconCustomers },
   { to: "/items", label: "Items", icon: IconItems },
   { to: "/reports", label: "Reports", icon: IconReports, ownerOnly: true },
   { to: "/support", label: "Support", icon: IconChat },
-  { to: "/suggestions", label: "Suggestions", icon: IconSuggestion, ownerOnly: true },
   { to: "/trash", label: "Trash", icon: IconTrash, ownerOnly: true },
   { to: "/settings", label: "Settings", icon: IconSettings, ownerOnly: true },
 ];
@@ -168,7 +163,7 @@ function Shell({ children }) {
       <aside className="no-print sidebar">
         <Link to="/" className="sidebar-brand">
           <span className="sidebar-brand-mark"><img src="/logo-icon-512.png" alt="" /></span>
-          <span className="sidebar-brand-word">Bill<em>it</em>Up</span>
+          <span className="sidebar-brand-word">TradeLedger</span>
         </Link>
 
         <nav className="sidebar-nav">
@@ -188,8 +183,6 @@ function Shell({ children }) {
             </NavLink>
           ))}
         </nav>
-
-        <SuggestionBox />
 
         <button type="button" className="sidebar-toggle" onClick={toggleCollapsed} title={collapsed ? "Expand" : "Collapse"}>
           <IconChevron direction={collapsed ? "right" : "left"} size={16} />
@@ -262,9 +255,7 @@ export default function App() {
       <Route path="/payments" element={<RequireAuth><Shell><PaymentsTimeline /></Shell></RequireAuth>} />
       <Route path="/vendors" element={<RequireAuth><Shell><Vendors /></Shell></RequireAuth>} />
       <Route path="/purchases" element={<RequireAuth><Shell><Purchases /></Shell></RequireAuth>} />
-      <Route path="/time-tracking" element={<RequireAuth><Shell><TimeTracking /></Shell></RequireAuth>} />
       <Route path="/reports" element={<RequireAuth><Shell><Reports /></Shell></RequireAuth>} />
-      <Route path="/suggestions" element={<RequireAuth><Shell><Suggestions /></Shell></RequireAuth>} />
       <Route path="/support" element={<RequireAuth><Shell><Support /></Shell></RequireAuth>} />
       <Route path="/settings" element={<RequireAuth><Shell><Settings /></Shell></RequireAuth>} />
       <Route path="/add-firm" element={<RequireAuth><Shell><AddFirm /></Shell></RequireAuth>} />

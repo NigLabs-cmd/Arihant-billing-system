@@ -36,7 +36,7 @@ export default function PortalLogin() {
   return (
     <div className="simple-auth-shell">
       <div className="simple-auth-card">
-        <img src="/logo-header.png" alt="BillItUp" className="simple-auth-logo" />
+        <img src="/tradeledger-logo.svg" alt="TradeLedger" className="simple-auth-logo" />
         <div className="simple-auth-icon-badge"><IconInvoice size={20} /></div>
         <h1>View your invoices</h1>
         <p className="simple-auth-subtitle">Log in with the email and password you set up to see your invoices and payment status.</p>

@@ -99,13 +99,10 @@ export default function LineItemsTable({
     });
   };
 
-  // Duplicates everything about the line except the two internal tags that
-  // link a line back to a specific unbilled time entry or billable expense
-  // (New Invoice only, see NewInvoice.jsx). Cloning that line was never
-  // meant to also clone which time entry it's attached to, that would make
-  // two lines both claim to represent the same logged hours.
+  // Duplicates everything about the line except the internal tag linking it
+  // back to a billable expense, so one expense can't be billed twice.
   const cloneLine = (index) => {
-    const { _time_entry_id, _billable_purchase_id, ...rest } = lines[index];
+    const { _billable_purchase_id, ...rest } = lines[index];
     insertAfter(index, { ...rest });
   };
 

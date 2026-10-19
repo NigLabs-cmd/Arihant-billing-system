@@ -61,7 +61,7 @@ export default function AddFirm() {
   return (
     <div className="auth-page">
       <div className="auth-card">
-        <img src="/logo-header.png" alt="BillItUp" className="auth-logo" />
+        <img src="/tradeledger-logo.svg" alt="TradeLedger" className="auth-logo" />
         <h1>Add Another Firm</h1>
         <p className="muted">
           This creates a separate firm with its own customers, invoices, and numbering — you'll switch
@@ -80,7 +80,7 @@ export default function AddFirm() {
               <button type="button" className="link-btn" onClick={requestPremium} disabled={requesting}>
                 {requesting ? "Sending request..." : "Request premium access"}
               </button>
-              {" "}— this sends a message straight to the BillItUp owner, who can reply with how to pay.
+              {" "}— this sends a message to the TradeLedger administrator, who can reply with payment details.
             </p>
           )}
           <div className="wizard-nav">

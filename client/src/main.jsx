@@ -15,11 +15,11 @@ import { api, getUser } from "./lib/api";
 // per-business health page instead of only a console nobody but that one
 // person will ever open (2026-09-15).
 window.addEventListener("error", (event) => {
-  console.error("BillItUp: unhandled error", event.error || event.message);
+  console.error("TradeLedger: unhandled error", event.error || event.message);
   if (getUser()) api.reportClientError(event.error?.message || event.message || "Unhandled error", window.location.pathname);
 });
 window.addEventListener("unhandledrejection", (event) => {
-  console.error("BillItUp: unhandled promise rejection", event.reason);
+  console.error("TradeLedger: unhandled promise rejection", event.reason);
   if (getUser()) api.reportClientError(event.reason?.message || String(event.reason), window.location.pathname);
 });
 

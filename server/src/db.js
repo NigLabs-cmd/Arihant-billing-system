@@ -368,11 +368,8 @@ CREATE TABLE IF NOT EXISTS purchases (
   created_at TEXT DEFAULT (datetime('now'))
 );
 
--- A lightweight in-app feedback box — any logged-in user (any role) can
--- suggest an improvement to the software itself, and an Owner/Admin can
--- review the list and mark items done. A category column was added just
--- after this table shipped (see ensureColumn below), so Naveen could tell
--- at a glance which part of the software a suggestion is about.
+-- Legacy suggestion records are retained for existing databases; the
+-- feature and its API are no longer exposed by this application.
 CREATE TABLE IF NOT EXISTS suggestions (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   business_id INTEGER NOT NULL REFERENCES businesses(id),
@@ -487,12 +484,8 @@ CREATE TABLE IF NOT EXISTS invoice_comments (
   created_at TEXT DEFAULT (datetime('now'))
 );
 
--- Simple manual time logging (2026-09-16) — a consultant logs hours against
--- a customer (optionally tagged with a project name, reusing the same free-
--- text convention as invoices.project_name rather than a real Projects
--- table), then pulls any not-yet-billed entries onto an invoice as line
--- items from the New Invoice page. billed/invoice_id are set together once
--- an entry is actually added to an invoice, so it can't be billed twice.
+-- Legacy time-entry records are retained for existing databases. Existing
+-- invoice links are still cleared when an invoice is deleted.
 CREATE TABLE IF NOT EXISTS time_entries (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   business_id INTEGER NOT NULL REFERENCES businesses(id),
@@ -747,9 +740,7 @@ ensureColumn("customers", "retainer_balance", "retainer_balance REAL DEFAULT 0")
 // just broken out separately rather than lumped into "amount" (2026-09-16).
 ensureColumn("payments", "tds_amount", "tds_amount REAL DEFAULT 0");
 
-// suggestions — which part of the software a suggestion is about (Invoices,
-// Reports, etc.), added right after the table itself so someone reviewing
-// the list can tell at a glance instead of reading every message.
+// Preserve the legacy suggestions schema on existing databases.
 ensureColumn("suggestions", "category", "category TEXT DEFAULT 'general'");
 
 // users

@@ -287,17 +287,6 @@ export const api = {
   permanentlyDeletePurchase: (id) => request(`/api/purchases/${id}/permanent`, { method: "DELETE" }),
   getBillablePurchases: (customerId) => request(`/api/purchases/billable?customer_id=${encodeURIComponent(customerId)}`),
 
-  listTimeEntries: () => request("/api/time-entries"),
-  getUnbilledTimeEntries: (customerId) => request(`/api/time-entries/unbilled?customer_id=${encodeURIComponent(customerId)}`),
-  createTimeEntry: (payload) => request("/api/time-entries", { method: "POST", body: payload }),
-  updateTimeEntry: (id, payload) => request(`/api/time-entries/${id}`, { method: "PUT", body: payload }),
-  deleteTimeEntry: (id) => request(`/api/time-entries/${id}`, { method: "DELETE" }),
-
-  createSuggestion: (message, category) => request("/api/suggestions", { method: "POST", body: { message, category } }),
-  listSuggestions: () => request("/api/suggestions"),
-  setSuggestionStatus: (id, status) => request(`/api/suggestions/${id}/status`, { method: "PUT", body: { status } }),
-  deleteSuggestion: (id) => request(`/api/suggestions/${id}`, { method: "DELETE" }),
-
   // Support chat with Naveen — raise a problem, then reply back and forth
   // on the same thread. See server/src/routes/support.js.
   listMySupportTickets: () => request("/api/support"),

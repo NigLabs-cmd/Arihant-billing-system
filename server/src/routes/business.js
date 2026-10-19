@@ -183,12 +183,12 @@ router.post("/test-email", requireRole("owner", "admin"), async (req, res) => {
   try {
     const transport = buildTransport(business);
     const fromEmail = business.smtp_from_email || business.smtp_user;
-    const fromName = business.smtp_from_name || business.name || "BillItUp";
+    const fromName = business.smtp_from_name || business.name || "TradeLedger";
     await transport.sendMail({
       from: `"${fromName}" <${fromEmail}>`,
       to,
-      subject: "BillItUp test email",
-      text: `This is a test email from BillItUp, sent using ${business.name || "your business"}'s SMTP settings.\n\nIf you're reading this, email delivery is working — invoices, quotes, and payment reminders will reach your customers.`,
+      subject: "TradeLedger test email",
+      text: `This is a test email from TradeLedger, sent using ${business.name || "your business"}'s SMTP settings.\n\nIf you're reading this, email delivery is working — invoices, quotes, and payment reminders will reach your customers.`,
     });
     res.json({ ok: true, sentTo: to });
   } catch (err) {

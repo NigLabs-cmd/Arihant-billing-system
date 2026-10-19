@@ -46,7 +46,7 @@ export default function Signup() {
     <div className="login-shell">
       <div className="login-brand-panel">
         <div className="login-brand-mark">
-          <img src="/logo-header.png" alt="BillItUp" />
+          <img src="/tradeledger-logo.svg" alt="TradeLedger" />
         </div>
 
         <h2 className="login-brand-tagline">
@@ -85,7 +85,7 @@ export default function Signup() {
 
       <div className="login-form-panel">
         <div className="login-form-card">
-          <h1>Set up BillItUp</h1>
+          <h1>Set up TradeLedger</h1>
           <p className="login-subtitle login-step-indicator">Step {step} of {TOTAL_STEPS}</p>
 
           {step === 1 && (

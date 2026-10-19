@@ -29,7 +29,7 @@ export async function sendPortalInviteEmail({ business, customer, token, isReset
   const link = `${appUrl}/portal/set-password/${token}`;
   const transport = buildTransport(business);
   const fromEmail = business.smtp_from_email || business.smtp_user;
-  const fromName = business.smtp_from_name || business.name || "BillItUp";
+  const fromName = business.smtp_from_name || business.name || "TradeLedger";
   const action = isReset ? "reset your portal password" : "set up your portal login";
   // Naveen's customers kept not knowing what email address to actually log
   // in with once they'd set a password — the old email never said, it only

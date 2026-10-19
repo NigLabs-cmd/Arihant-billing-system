@@ -4,12 +4,9 @@ import { api, getUser } from "../lib/api";
 import { formatDateTime } from "../lib/format";
 import { startTour } from "../lib/tour";
 
-// Any logged-in role can raise a problem and chat with Naveen about it here
-// (2026-09-15) — same audience as the Suggestions sidebar box, but this is
-// for "something is actually wrong", not a feature idea, and it's a real
-// back-and-forth rather than a one-way message. Naveen's own side of the
-// same threads lives in Master Admin (per-business, and a cross-business
-// inbox) — see AdminPanel.jsx and BusinessHealth.jsx.
+// Any logged-in role can report a problem and chat with the install
+// administrator here. The administrator's side of the same threads lives in
+// Master Admin — see AdminPanel.jsx and BusinessHealth.jsx.
 const STATUS_LABELS = { open: "Open", in_progress: "In progress", resolved: "Resolved" };
 
 function NewTicketForm({ onCreated, onCancel }) {
@@ -43,7 +40,7 @@ function NewTicketForm({ onCreated, onCancel }) {
         <textarea rows={5} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="What did you try, and what happened instead?" />
       </label>
       {error && <p className="error">{error}</p>}
-      <div className="suggestion-modal-actions">
+      <div className="support-form-actions">
         <button type="button" className="link-btn" onClick={onCancel}>Cancel</button>
         <button type="submit" disabled={busy || !subject.trim() || !message.trim()}>
           {busy ? "Sending..." : "Send"}
@@ -155,7 +152,7 @@ function TicketThread({ ticket, onUpdated }) {
           messages.map((m) => (
             <div key={m.id} className={`support-bubble support-bubble-${m.sender}`}>
               <div className="support-bubble-meta">
-                <strong>{m.sender === "admin" ? "BillItUp Support" : m.sender_name || user?.name || "You"}</strong>
+                <strong>{m.sender === "admin" ? "TradeLedger Support" : m.sender_name || user?.name || "You"}</strong>
                 <span className="muted">{formatDateTime(m.created_at)}</span>
               </div>
               <p>{m.message}</p>

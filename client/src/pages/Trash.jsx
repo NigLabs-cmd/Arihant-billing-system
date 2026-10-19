@@ -181,7 +181,7 @@ export default function Trash() {
         <h1>Trash</h1>
       </div>
       <p className="muted">
-        Anything deleted across BillItUp lands here first instead of vanishing outright. Restore a row any time, or
+        Anything deleted across TradeLedger lands here first instead of vanishing outright. Restore a row any time, or
         delete it permanently once you're sure, permanent deletes cannot be undone.
       </p>
 

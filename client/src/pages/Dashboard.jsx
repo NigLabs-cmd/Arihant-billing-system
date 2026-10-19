@@ -105,7 +105,7 @@ export default function Dashboard() {
         <p className="muted">
           Your annual turnover is set at ₹{formatMoney(business.annual_turnover)} or more, and e-Invoicing under GST is
           mandatory past ₹5 crore turnover. Double check with your GST practitioner whether e-Invoicing applies to you
-          (BillItUp doesn't generate e-Invoices itself).
+          (TradeLedger doesn't generate e-Invoices itself).
         </p>
       )}
 

@@ -27,7 +27,7 @@ export default class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error, info) {
-    console.error("BillItUp crashed while rendering:", error, info?.componentStack);
+    console.error("TradeLedger crashed while rendering:", error, info?.componentStack);
     // Only reported when someone is actually logged in — an error on a
     // public page (the landing page, a shared invoice link) has no business
     // to attach it to, and the server route requires auth anyway.
@@ -42,7 +42,7 @@ export default class ErrorBoundary extends Component {
     return (
       <div className="simple-auth-shell">
         <div className="simple-auth-card">
-          <img src="/logo-header.png" alt="BillItUp" className="simple-auth-logo" />
+          <img src="/tradeledger-logo.svg" alt="TradeLedger" className="simple-auth-logo" />
           <div className="simple-auth-icon-badge crash-icon-badge">
             <IconAlert size={22} />
           </div>

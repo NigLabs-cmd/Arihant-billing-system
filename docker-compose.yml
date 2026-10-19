@@ -21,7 +21,7 @@ services:
         # unless the API is deployed on a different host than the client.
         VITE_API_URL: ""
     ports:
-      - "8080:80"
+      - "8081:80"
     depends_on:
       - server
     restart: unless-stopped

@@ -70,7 +70,7 @@ export default function RecurringInvoices() {
         <h1>Recurring Invoices</h1>
         <Link className="btn" to="/recurring-invoices/new">+ New Recurring Invoice</Link>
       </div>
-      <p className="muted">Set up an invoice once (e.g. a monthly retainer) and BillItUp raises it automatically on schedule — checked hourly, and generated as soon as the server is running once a date is due.</p>
+      <p className="muted">Set up an invoice once and TradeLedger raises it automatically on schedule — checked hourly, and generated as soon as the server is running once a date is due.</p>
 
       {error && <p className="error">{error}</p>}
       {loading && <p className="muted">Loading...</p>}

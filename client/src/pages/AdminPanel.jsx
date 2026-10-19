@@ -5,7 +5,7 @@ import { formatDateTime, formatMoney } from "../lib/format";
 import { ATTENTION_LABELS } from "../lib/businessSummary";
 import {
   IconTrash, IconBuilding, IconReports, IconCloud, IconTeam,
-  IconInvoice, IconDashboard, IconSuggestion, IconChat, IconAnnouncement, IconAlert,
+  IconInvoice, IconDashboard, IconChat, IconAnnouncement, IconAlert,
 } from "../components/Icons";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { AdminTicketThread, ErrorRow } from "./BusinessHealth";
@@ -14,8 +14,7 @@ import { AdminTicketThread, ErrorRow } from "./BusinessHealth";
 // software, needs to keep an eye on this install from a single place: how
 // many businesses have signed up and whether they're actually logging in,
 // the free/premium switch (no payment processor wired up yet — he gets paid
-// directly, then flips a business here), and every suggestion submitted from
-// inside the app across every business, not just one at a time. Deliberately
+// directly, then flips a business here. Deliberately
 // outside the regular Shell/sidebar — this isn't a business feature, it's a
 // tool for running the install itself, and only reachable by going straight
 // to /admin (nothing in the app links to it).
@@ -23,9 +22,8 @@ import { AdminTicketThread, ErrorRow } from "./BusinessHealth";
 // Given a navy top bar and its own card/badge/confirm-dialog treatment
 // (2026-09-15) so it reads as a distinct, serious control panel rather than
 // a plain page-header dropped onto the business app's own look — and so
-// that its two irreversible actions (moving a business off premium,
-// deleting a piece of feedback) always ask first instead of firing on one
-// click.
+// that moving a business off premium always asks first instead of firing on
+// one click.
 // A tile with a `tab` renders as a button that jumps straight there — added
 // 2026-09-16 after Naveen pointed out the Open Errors tile just showed a
 // number with no way to actually see or close what it was counting.
@@ -37,7 +35,6 @@ const STAT_TILES = [
   { key: "totalInvoices", label: "Total Invoices", icon: IconInvoice },
   { key: "loginsToday", label: "Logins Today", icon: IconDashboard },
   { key: "loginsThisWeek", label: "Logins This Week", icon: IconCloud },
-  { key: "openSuggestions", label: "Open Feedback", icon: IconSuggestion, attentionIfPositive: true, tab: "feedback" },
   { key: "openErrors", label: "Open Errors", icon: IconAlert, attentionIfPositive: true, tab: "errors" },
   { key: "openSupportTickets", label: "Support Waiting", icon: IconChat, attentionIfPositive: true, tab: "support" },
 ];
@@ -58,8 +55,6 @@ export default function AdminPanel() {
   const navigate = useNavigate();
   const [businesses, setBusinesses] = useState(null);
   const [stats, setStats] = useState(null);
-  const [suggestions, setSuggestions] = useState(null);
-  const [suggestionFilter, setSuggestionFilter] = useState("open");
   const [tickets, setTickets] = useState(null);
   const [expandedTicketId, setExpandedTicketId] = useState(null);
   const [allErrors, setAllErrors] = useState(null);
@@ -73,22 +68,19 @@ export default function AdminPanel() {
   const [businessAttentionFilter, setBusinessAttentionFilter] = useState("all");
   const [sort, setSort] = useState({ key: "created_at", dir: "desc" });
   const [planTarget, setPlanTarget] = useState(null); // business pending plan-change confirmation
-  const [deleteTarget, setDeleteTarget] = useState(null); // suggestion pending delete confirmation
   const [activeTab, setActiveTab] = useState("businesses");
 
   const load = () => {
     Promise.all([
       adminApi.listBusinesses(),
       adminApi.getStats(),
-      adminApi.listSuggestions(),
       adminApi.listAllSupportTickets(),
       adminApi.listAllErrors(),
       adminApi.listAnnouncements(),
     ])
-      .then(([businessRows, statsData, suggestionRows, ticketRows, errorRows, announcementRows]) => {
+      .then(([businessRows, statsData, ticketRows, errorRows, announcementRows]) => {
         setBusinesses(businessRows);
         setStats(statsData);
-        setSuggestions(suggestionRows);
         setTickets(ticketRows);
         setAllErrors(errorRows);
         setAnnouncements(announcementRows);
@@ -105,7 +97,7 @@ export default function AdminPanel() {
       return;
     }
     load();
-    // Poll so a new business, support message, feedback item, or
+    // Poll so a new business, support message, or
     // announcement shows up on its own — nobody should have to hit refresh
     // to notice something changed on this page (2026-09-16).
     const interval = setInterval(load, 20000);
@@ -126,28 +118,6 @@ export default function AdminPanel() {
       setError(err.message);
     } finally {
       setBusyId(null);
-    }
-  };
-
-  const toggleSuggestion = async (s) => {
-    setError("");
-    try {
-      await adminApi.setSuggestionStatus(s.id, s.status === "open" ? "done" : "open");
-      load();
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  const confirmDeleteSuggestion = async () => {
-    if (!deleteTarget) return;
-    setError("");
-    try {
-      await adminApi.deleteSuggestion(deleteTarget.id);
-      setDeleteTarget(null);
-      load();
-    } catch (err) {
-      setError(err.message);
     }
   };
 
@@ -205,12 +175,6 @@ export default function AdminPanel() {
     return rows;
   }, [businesses, businessSearch, sort]);
 
-  const filteredSuggestions = useMemo(() => {
-    if (!suggestions) return [];
-    if (suggestionFilter === "all") return suggestions;
-    return suggestions.filter((s) => s.status === suggestionFilter);
-  }, [suggestions, suggestionFilter]);
-
   const filteredErrors = useMemo(() => {
     if (!allErrors) return [];
     if (errorStatusFilter === "all") return allErrors;
@@ -233,7 +197,7 @@ export default function AdminPanel() {
     </th>
   );
 
-  if (!businesses || !stats || !suggestions || !allErrors) {
+  if (!businesses || !stats || !allErrors) {
     return (
       <div className="admin-page">
         <div className="admin-content">
@@ -250,7 +214,7 @@ export default function AdminPanel() {
           <div className="admin-topbar-brand">
             <img src="/logo-icon-512.png" alt="" />
             <div>
-              <strong>BillItUp</strong>
+              <strong>TradeLedger</strong>
               <span>Master Admin</span>
             </div>
           </div>
@@ -312,14 +276,6 @@ export default function AdminPanel() {
           </button>
           <button
             type="button"
-            className={`tab-btn${activeTab === "feedback" ? " active" : ""}`}
-            onClick={() => setActiveTab("feedback")}
-          >
-            <IconSuggestion size={16} /> Feedback
-            {stats.openSuggestions > 0 && <span className="tab-btn-badge">{stats.openSuggestions}</span>}
-          </button>
-          <button
-            type="button"
             className={`tab-btn${activeTab === "announcements" ? " active" : ""}`}
             onClick={() => setActiveTab("announcements")}
           >
@@ -332,7 +288,7 @@ export default function AdminPanel() {
           <SectionHeader
             icon={IconBuilding}
             title="Businesses"
-            description="Everything else in BillItUp stays free. The only thing Premium unlocks is running more than one firm under the same login. Flip a business here once you've been paid directly."
+            description="Everything else in TradeLedger stays available. Premium unlocks running more than one firm under the same login."
           />
           <div className="admin-table-card">
             <div className="list-toolbar">
@@ -494,61 +450,6 @@ export default function AdminPanel() {
         </div>
         )}
 
-        {activeTab === "feedback" && (
-        <div className="admin-section">
-          <SectionHeader
-            icon={IconSuggestion}
-            title="Feedback"
-            description="Every suggestion submitted from inside the app, across every business, newest first."
-          />
-          <div className="admin-table-card">
-            {suggestions.length === 0 ? (
-              <p className="muted">No feedback yet.</p>
-            ) : (
-              <>
-                <div className="list-toolbar">
-                  <select value={suggestionFilter} onChange={(e) => setSuggestionFilter(e.target.value)}>
-                    <option value="open">Open</option>
-                    <option value="done">Done</option>
-                    <option value="all">All</option>
-                  </select>
-                </div>
-                {filteredSuggestions.length === 0 ? (
-                  <p className="list-empty-filtered">Nothing here.</p>
-                ) : (
-                  <table className="table">
-                    <thead>
-                      <tr><th>Date</th><th>Business</th><th>From</th><th>Area</th><th>Suggestion</th><th>Status</th><th></th></tr>
-                    </thead>
-                    <tbody>
-                      {filteredSuggestions.map((s) => (
-                        <tr key={s.id}>
-                          <td>{String(s.created_at).slice(0, 10)}</td>
-                          <td>{s.business_name}</td>
-                          <td>{s.user_name || "—"}</td>
-                          <td>{s.category || "General"}</td>
-                          <td style={{ whiteSpace: "pre-wrap" }}>{s.message}</td>
-                          <td>
-                            <button type="button" className="link-btn" onClick={() => toggleSuggestion(s)}>
-                              {s.status === "open" ? "Mark done" : "Reopen"}
-                            </button>
-                          </td>
-                          <td>
-                            <button type="button" className="link-btn" onClick={() => setDeleteTarget(s)} title="Delete">
-                              <IconTrash size={16} />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </>
-            )}
-          </div>
-        </div>
-        )}
-
         {activeTab === "announcements" && (
         <div className="admin-section">
           <SectionHeader
@@ -614,16 +515,6 @@ export default function AdminPanel() {
         />
       )}
 
-      {deleteTarget && (
-        <ConfirmDialog
-          title="Delete this feedback?"
-          message={`This permanently deletes the suggestion from ${deleteTarget.business_name}. This can't be undone.`}
-          confirmLabel="Delete"
-          danger
-          onConfirm={confirmDeleteSuggestion}
-          onCancel={() => setDeleteTarget(null)}
-        />
-      )}
     </div>
   );
 }

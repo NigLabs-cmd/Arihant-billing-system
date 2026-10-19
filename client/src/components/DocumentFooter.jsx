@@ -52,7 +52,7 @@ export default function DocumentFooter({ business, total, upiQrDataUrl, currency
 
       <div className="doc-powered-by">
         <span>Powered by</span>
-        <img src="/logo-header.png" alt="BillItUp" />
+        <img src="/tradeledger-logo.svg" alt="TradeLedger" />
       </div>
     </div>
   );

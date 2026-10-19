@@ -26,7 +26,7 @@ export function buildBusinessSummary(b) {
         ? "Connected"
         : "Not connected";
   return [
-    `BillItUp business: ${b.name}`,
+    `TradeLedger business: ${b.name}`,
     `Plan: ${b.plan === "premium" ? "Premium" : "Free"}`,
     `Contact: ${[b.owner_email, b.owner_phone].filter(Boolean).join(", ") || "Not provided"}`,
     `GSTIN: ${b.gstin || "Not set"}`,

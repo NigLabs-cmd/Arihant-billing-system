@@ -211,16 +211,6 @@ export function IconPayments({ size = 18 }) {
   );
 }
 
-export function IconSuggestion({ size = 18 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" {...base}>
-      <path d="M9 18.5h6M10 21h4" />
-      <path d="M12 3a5.5 5.5 0 0 0-3.2 10c.6.4 1 1.1 1 1.9v.6h4.4v-.6c0-.8.4-1.5 1-1.9A5.5 5.5 0 0 0 12 3Z" />
-      <path d="M12 6.5c-1.4 0-2.5 1.1-2.5 2.5" />
-    </svg>
-  );
-}
-
 export function IconEdit({ size = 18 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" {...base}>
@@ -293,17 +283,6 @@ export function IconAnnouncement({ size = 18 }) {
       <path d="M4 10.5v3a1 1 0 0 0 1 1h1.5l1.2 4.3a1 1 0 0 0 1 .7h1a1 1 0 0 0 .96-1.28L9 14.5" strokeLinejoin="round" />
       <path d="M6.5 10.5 17 6v13l-10.5-4.5Z" strokeLinejoin="round" />
       <path d="M17 9.2a3 3 0 0 1 0 5.6" />
-    </svg>
-  );
-}
-
-// Time Tracking sidebar nav (2026-09-16) — a plain clock, same shared stroke
-// weight as the rest of this set.
-export function IconClock({ size = 18 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" {...base}>
-      <circle cx="12" cy="12" r="8.5" />
-      <path d="M12 7v5.3l3.5 2" />
     </svg>
   );
 }

@@ -143,7 +143,7 @@ export default function ItemFormModal({ item, initialName, onClose, onSaved }) {
 
           <h4 className="modal-section-title">Purchase Information</h4>
           <p className="muted" style={{ marginTop: -4, marginBottom: 8, fontSize: 12 }}>
-            For your own records only. BillItUp's Purchases page doesn't pull from this catalog yet, so nothing here
+            For your own records only. The Purchases page doesn't pull from this catalog yet, so nothing here
             changes what a customer sees or what you're billed.
           </p>
           <div className="form-row">

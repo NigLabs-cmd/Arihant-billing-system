@@ -88,7 +88,7 @@ export default function ZohoImportCard() {
           <h2>Import from Zoho Books</h2>
           <p className="muted">
             Bring your existing items, customers, and invoices in from Zoho Books. Everything you upload here goes
-            into your own business account only, nobody else using BillItUp ever sees it.
+            into your own business account only; it's not visible to other businesses.
           </p>
         </div>
       </div>

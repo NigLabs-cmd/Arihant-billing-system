@@ -265,7 +265,7 @@ export default function Settings() {
             <p className="muted" style={{ marginTop: -8 }}>
               The RBI bank rate feeds the Section 43B(h) MSME late payment interest shown on Purchases (three times
               this rate, once a vendor's payment passes its 15/45 day deadline). Annual turnover only drives the
-              e-Invoicing awareness banner on the Dashboard once it's ₹5 crore or more, and BillItUp doesn't check the
+              e-Invoicing awareness banner on the Dashboard once it's ₹5 crore or more, and TradeLedger doesn't check the
               real GST portal for you.
             </p>
             {error && <p className="error">{error}</p>}
@@ -477,7 +477,7 @@ function InvoiceBrandingSettings({ business, setBusiness }) {
           <input value={business.bank_upi_id || ""} onChange={(e) => setBusiness({ ...business, bank_upi_id: e.target.value })} placeholder="yourname@bank" />
         </label>
         <p className="muted" style={{ fontSize: 12, marginTop: -6 }}>
-          Set this and a scannable QR code is added automatically to every unpaid invoice, the emailed/downloaded PDF, and the customer portal — the client scans it in any UPI app to pay you directly. BillItUp never handles the payment itself; you still mark the invoice paid once you see it land in your account.
+          Set this and a scannable QR code is added automatically to every unpaid invoice, the emailed/downloaded PDF, and the customer portal — the client scans it in any UPI app to pay you directly. TradeLedger never handles the payment itself; you still mark the invoice paid once you see it land in your account.
         </p>
 
         <div className="field-row">
@@ -638,7 +638,7 @@ const EMAIL_PROVIDERS = [
           <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noreferrer">
             myaccount.google.com/apppasswords
           </a>{" "}
-          and create an app password, name it "BillItUp".
+          and create an app password, name it "TradeLedger".
         </li>
         <li>Paste that 16 character app password below as the SMTP password — not your normal Gmail password, that will not work.</li>
         <li>SMTP username is your full Gmail address.</li>

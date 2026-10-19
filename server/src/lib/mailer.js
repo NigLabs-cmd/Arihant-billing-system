@@ -368,7 +368,7 @@ export function renderDocumentPdf({ docLabel, docNumber, docDate, extraMeta = []
       doc.fontSize(9).text(`Authorized Signature${business.signature_name ? ` — ${business.signature_name}` : ""}`, sigX, lineY + 6, { width: 160 });
     }
 
-    doc.fontSize(7).fillColor("#999").text("Powered by BillItUp", 40, 800, { width: 520, align: "center" });
+    doc.fontSize(7).fillColor("#999").text("Powered by TradeLedger", 40, 800, { width: 520, align: "center" });
     doc.fillColor("#000");
 
     doc.end();
@@ -378,7 +378,7 @@ export function renderDocumentPdf({ docLabel, docNumber, docDate, extraMeta = []
 export async function sendDocumentEmail({ business, to, subject, text, html, pdfBuffer, pdfFilename }) {
   const transport = buildTransport(business);
   const fromEmail = business.smtp_from_email || business.smtp_user;
-  const fromName = business.smtp_from_name || business.name || "BillItUp";
+  const fromName = business.smtp_from_name || business.name || "TradeLedger";
   await transport.sendMail({
     from: `"${fromName}" <${fromEmail}>`,
     to,
@@ -403,7 +403,7 @@ function escapeHtml(str) {
 // invoices, which have a public shareable link — quotes and credit notes
 // don't, so they render without a button (2026-09-15).
 export function renderEmailHtml({ business, bodyText, ctaLabel, ctaUrl, summaryRows = [] }) {
-  const brandName = escapeHtml(business.name || "BillItUp");
+  const brandName = escapeHtml(business.name || "TradeLedger");
   const headerInner = business.logo_data_url
     ? `<img src="${business.logo_data_url}" alt="${brandName}" style="max-height:40px;max-width:180px;display:block;" />`
     : `<span style="color:#ffffff;font-size:18px;font-weight:700;font-family:Arial,Helvetica,sans-serif;">${brandName}</span>`;
@@ -435,7 +435,7 @@ export function renderEmailHtml({ business, bodyText, ctaLabel, ctaUrl, summaryR
             ${ctaHtml}
           </td></tr>
           <tr><td style="padding:16px 28px;border-top:1px solid #e2e5ea;">
-            <p style="margin:0;font-size:11px;color:#9aa0aa;text-align:center;font-family:Arial,Helvetica,sans-serif;">Powered by BillItUp</p>
+            <p style="margin:0;font-size:11px;color:#9aa0aa;text-align:center;font-family:Arial,Helvetica,sans-serif;">Powered by TradeLedger</p>
           </td></tr>
         </table>
       </td></tr>

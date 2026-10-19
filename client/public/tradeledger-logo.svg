@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="120" viewBox="0 0 520 120" role="img" aria-labelledby="title">
+  <title id="title">TradeLedger</title>
+  <g fill="none" stroke="#1a7f5a" stroke-linecap="round" stroke-linejoin="round" stroke-width="7">
+    <path d="M17 24h43l20 20v52H17z" fill="#fff" stroke="#123b60"/>
+    <path d="M60 24v21h20M29 56h38M29 68h38M29 80h24" stroke="#123b60" stroke-width="5"/>
+    <path d="m22 99 13-14 13 9 18-21"/>
+    <path d="m57 73 10-1-2 10" fill="#1a7f5a"/>
+  </g>
+  <text x="96" y="80" fill="#123b60" font-family="Arial, Helvetica, sans-serif" font-size="55" font-weight="700" letter-spacing="-2">TradeLedger</text>
+</svg>

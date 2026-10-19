@@ -39,7 +39,7 @@ export default function AdminLogin() {
   return (
     <div className="simple-auth-shell">
       <div className="simple-auth-card">
-        <img src="/logo-header.png" alt="BillItUp" className="simple-auth-logo" />
+        <img src="/tradeledger-logo.svg" alt="TradeLedger" className="simple-auth-logo" />
 
         <form onSubmit={handleSubmit}>
           <div className="simple-auth-icon-badge is-admin"><IconLock size={20} /></div>

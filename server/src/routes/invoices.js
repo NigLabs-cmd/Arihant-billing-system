@@ -122,7 +122,7 @@ router.post("/", (req, res) => {
     customer_id, invoice_date, due_date, terms, terms_and_conditions, reference, subject, gstin, notes, lineItems, gst_treatment,
     eway_bill_number, eway_transporter_name, eway_transporter_id, eway_vehicle_number, eway_distance_km,
     currency, project_name, milestone_label, project_total_amount,
-    retainer_applied, time_entry_ids, billable_purchase_ids, invoice_number, client_request_id,
+    retainer_applied, billable_purchase_ids, invoice_number, client_request_id,
   } = req.body;
   // A section header alone doesn't count as a line item. It carries no
   // quantity or rate, so an invoice made up of nothing but headers would
@@ -251,17 +251,6 @@ router.post("/", (req, res) => {
       ).run(req.auth.businessId, customer_id, retainerApplied, `Applied to invoice ${invoiceNumber}`, id);
     }
 
-    // Pull in any unbilled time entries / billable expenses the client
-    // selected — mark them billed against THIS invoice so they can never be
-    // added to a second one by mistake. Silently ignores any id that isn't
-    // actually this business's own or is already billed, rather than
-    // failing the whole invoice over a stale selection.
-    if (Array.isArray(time_entry_ids) && time_entry_ids.length > 0) {
-      const markTimeEntry = db.prepare(
-        "UPDATE time_entries SET billed = 1, invoice_id = ? WHERE id = ? AND business_id = ? AND billed = 0"
-      );
-      for (const teId of time_entry_ids) markTimeEntry.run(id, teId, req.auth.businessId);
-    }
     if (Array.isArray(billable_purchase_ids) && billable_purchase_ids.length > 0) {
       const markPurchase = db.prepare(
         "UPDATE purchases SET billed_invoice_id = ? WHERE id = ? AND business_id = ? AND billed_invoice_id IS NULL"

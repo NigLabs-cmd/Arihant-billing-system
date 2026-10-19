@@ -22,9 +22,9 @@ export default defineConfig({
         ],
       },
       manifest: {
-        name: 'BillItUp — Invoicing for Corporates & Agencies',
-        short_name: 'BillItUp',
-        description: 'Free, open-source invoicing and billing for corporates, agencies, and consultants.',
+        name: 'TradeLedger — Oil Trading Billing',
+        short_name: 'TradeLedger',
+        description: 'Billing and transaction records for an oil-trading business.',
         theme_color: '#1a7f5a',
         background_color: '#ffffff',
         display: 'standalone',

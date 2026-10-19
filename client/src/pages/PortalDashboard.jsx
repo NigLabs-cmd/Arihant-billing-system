@@ -172,7 +172,7 @@ export default function PortalDashboard() {
                               <div>
                                 <p><strong>Scan with any UPI app</strong> (GPay, PhonePe, Paytm, BHIM...) to pay ₹{formatMoney(inv.balance_due)} directly to {business.name}.</p>
                                 <p className="muted" style={{ fontSize: 12 }}>
-                                  This pays {business.name} directly — BillItUp never handles the payment itself. {business.name} will mark this invoice paid once they see it land in their account.
+                                  This pays {business.name} directly — TradeLedger never handles the payment itself. {business.name} will mark this invoice paid once they see it land in their account.
                                 </p>
                               </div>
                             </div>

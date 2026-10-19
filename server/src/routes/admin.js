@@ -353,10 +353,9 @@ router.delete("/announcements/:id", (req, res) => {
   res.status(204).end();
 });
 
-// One glance at how the whole install is doing — every business, whether
-// people are actually signing in, and how much feedback is waiting to be
-// read. Naveen asked for "a place to see all" logged-in users and how the
-// software is being used; this is that place.
+// One glance at how the whole install is doing — every business and whether
+// people are actually signing in. Naveen asked for "a place to see all"
+// logged-in users and how the software is being used; this is that place.
 router.get("/stats", (req, res) => {
   if (!checkAdminSecret(req, res)) return;
   const count = (sql, ...params) => db.prepare(sql).get(...params).n;
@@ -370,47 +369,9 @@ router.get("/stats", (req, res) => {
     activeBusinesses30d: count(
       "SELECT COUNT(DISTINCT business_id) AS n FROM login_events WHERE logged_in_at >= datetime('now', '-30 days')"
     ),
-    openSuggestions: count("SELECT COUNT(*) AS n FROM suggestions WHERE status = 'open'"),
     openErrors: count("SELECT COUNT(*) AS n FROM error_log WHERE status = 'open'"),
     openSupportTickets: count("SELECT COUNT(*) AS n FROM support_tickets WHERE status != 'resolved'"),
   });
-});
-
-// Every suggestion from every business in one feed, newest first, with the
-// business name attached — the per-business /api/suggestions route (see
-// routes/suggestions.js) only ever shows one business its own feedback, so
-// this is the only place Naveen can read what everyone is saying at once.
-router.get("/suggestions", (req, res) => {
-  if (!checkAdminSecret(req, res)) return;
-  const rows = db
-    .prepare(
-      `SELECT s.*, b.name AS business_name
-       FROM suggestions s
-       JOIN businesses b ON b.id = s.business_id
-       ORDER BY s.created_at DESC`
-    )
-    .all();
-  res.json(rows);
-});
-
-router.put("/suggestions/:id/status", (req, res) => {
-  if (!checkAdminSecret(req, res)) return;
-  const { status } = req.body || {};
-  if (!["open", "done"].includes(status)) return res.status(400).json({ error: "Invalid status" });
-  db.prepare("UPDATE suggestions SET status = ? WHERE id = ?").run(status, req.params.id);
-  const updated = db
-    .prepare(
-      `SELECT s.*, b.name AS business_name FROM suggestions s JOIN businesses b ON b.id = s.business_id WHERE s.id = ?`
-    )
-    .get(req.params.id);
-  if (!updated) return res.status(404).json({ error: "Not found" });
-  res.json(updated);
-});
-
-router.delete("/suggestions/:id", (req, res) => {
-  if (!checkAdminSecret(req, res)) return;
-  db.prepare("DELETE FROM suggestions WHERE id = ?").run(req.params.id);
-  res.status(204).end();
 });
 
 router.post("/set-plan", (req, res) => {

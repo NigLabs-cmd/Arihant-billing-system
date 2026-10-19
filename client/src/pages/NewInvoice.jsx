@@ -95,11 +95,8 @@ export default function NewInvoice() {
   // exactly what showed up on Clone right after it shipped (2026-09-20).
   const itemsRef = useRef([]);
 
-  // Unbilled hours / billable expenses / retainer draw-down — only offered
-  // when creating a brand new invoice, not when editing one, so a later edit
-  // can never double-attach or re-draw-down the same entries (2026-09-16).
-  const [unbilledTimeEntries, setUnbilledTimeEntries] = useState([]);
-  const [selectedTimeEntryIds, setSelectedTimeEntryIds] = useState([]);
+  // Billable expenses / retainer draw-down are only offered when creating a
+  // new invoice, not when editing one.
   const [billablePurchases, setBillablePurchases] = useState([]);
   const [selectedPurchaseIds, setSelectedPurchaseIds] = useState([]);
   const [retainerApplied, setRetainerApplied] = useState("");
@@ -276,44 +273,25 @@ export default function NewInvoice() {
     setCustomerId(customer?.id || "");
     setCustomerName(customer?.name || "");
     setGstin(customer?.gstin || "");
-    setSelectedTimeEntryIds([]);
     setSelectedPurchaseIds([]);
     setRetainerApplied("");
     setLines((prev) => {
-      const kept = prev.filter((l) => !l._time_entry_id && !l._billable_purchase_id);
+      const kept = prev.filter((l) => !l._billable_purchase_id);
       return kept.length > 0 ? kept : [emptyLine()];
     });
   };
 
-  // Load this customer's unbilled hours + billable expenses whenever the
-  // customer changes — new-invoice only (see the state comment above).
+  // Load this customer's billable expenses whenever the customer changes.
   useEffect(() => {
     if (isEdit || !customerId) {
-      setUnbilledTimeEntries([]);
       setBillablePurchases([]);
       return;
     }
-    api.getUnbilledTimeEntries(customerId).then(setUnbilledTimeEntries).catch(() => setUnbilledTimeEntries([]));
     api.getBillablePurchases(customerId).then(setBillablePurchases).catch(() => setBillablePurchases([]));
   }, [customerId, isEdit]);
 
-  // Checking one of these adds a matching line item to the invoice itself
-  // (that's the whole point — "turns into an invoice line"), tagged with
-  // _time_entry_id/_billable_purchase_id so unchecking removes exactly that
-  // line back out again rather than guessing by description text.
-  const toggleTimeEntry = (te) => {
-    const alreadyIn = selectedTimeEntryIds.includes(te.id);
-    setSelectedTimeEntryIds((prev) => (alreadyIn ? prev.filter((x) => x !== te.id) : [...prev, te.id]));
-    if (alreadyIn) {
-      setLines((prev) => prev.filter((l) => l._time_entry_id !== te.id));
-    } else {
-      const label = [te.project_name, te.description].filter(Boolean).join(" — ") || "Time logged";
-      setLines((prev) => [
-        ...prev,
-        { ...emptyLine(), description: `${label} (${te.entry_date})`, qty: te.hours, rate: te.rate, _time_entry_id: te.id },
-      ]);
-    }
-  };
+  // Selected billable expenses are tagged so unchecking removes exactly the
+  // associated invoice line rather than guessing by description text.
   const toggleBillablePurchase = (p) => {
     const alreadyIn = selectedPurchaseIds.includes(p.id);
     setSelectedPurchaseIds((prev) => (alreadyIn ? prev.filter((x) => x !== p.id) : [...prev, p.id]));
@@ -386,7 +364,6 @@ export default function NewInvoice() {
     lineItems: lines.map((l) => ({ ...l, item_id: l.item_id || null })),
     ...(!isEdit && {
       retainer_applied: retainerApplied || null,
-      time_entry_ids: selectedTimeEntryIds,
       billable_purchase_ids: selectedPurchaseIds,
       // Only reaches the server as a real number when Settings > Invoice
       // Number Preferences is set to manual. The server ignores this
@@ -692,20 +669,9 @@ export default function NewInvoice() {
               </label>
             </CollapsibleSection>
 
-            {!isEdit && customerId && (unbilledTimeEntries.length > 0 || billablePurchases.length > 0 || retainerBalance > 0) && (
+            {!isEdit && customerId && (billablePurchases.length > 0 || retainerBalance > 0) && (
               <section className="form-card">
-                <h2>Unbilled Hours, Expenses &amp; Retainer</h2>
-                {unbilledTimeEntries.length > 0 && (
-                  <div className="block">
-                    <p className="muted" style={{ marginTop: 0, marginBottom: 4, fontSize: 13 }}>Add unbilled hours logged for this customer:</p>
-                    {unbilledTimeEntries.map((te) => (
-                      <label key={te.id} className="checkbox-row">
-                        <input type="checkbox" checked={selectedTimeEntryIds.includes(te.id)} onChange={() => toggleTimeEntry(te)} />
-                        {te.entry_date}: {te.hours}h{te.project_name ? ` (${te.project_name})` : ""}{te.description ? `, ${te.description}` : ""} @ {symbol}{formatMoney(te.rate)}/hr
-                      </label>
-                    ))}
-                  </div>
-                )}
+                <h2>Billable Expenses &amp; Retainer</h2>
                 {billablePurchases.length > 0 && (
                   <div className="block">
                     <p className="muted" style={{ marginTop: 0, marginBottom: 4, fontSize: 13 }}>Add billable expenses logged for this customer:</p>
@@ -734,7 +700,7 @@ export default function NewInvoice() {
             {isPremium ? (
               <CollapsibleSection title="E-Way Bill Details" defaultOpen={isEdit && hasEwayData}>
                 <p className="muted" style={{ marginTop: 0, fontSize: 13 }}>
-                  BillItUp doesn't generate the e-way bill itself — record the details of one you've already generated
+                  TradeLedger doesn't generate the e-way bill itself — record the details of one you've already generated
                   on the government portal, and it will show on this invoice.
                 </p>
                 <label className="block" style={{ maxWidth: "none" }}>E-Way Bill Number

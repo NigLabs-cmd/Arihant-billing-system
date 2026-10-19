@@ -113,12 +113,12 @@ router.post("/forgot-password", forgotPasswordLimiter, async (req, res) => {
   try {
     const transport = buildTransport(business);
     const fromEmail = business.smtp_from_email || business.smtp_user;
-    const fromName = business.smtp_from_name || business.name || "BillItUp";
+    const fromName = business.smtp_from_name || business.name || "TradeLedger";
     await transport.sendMail({
       from: `"${fromName}" <${fromEmail}>`,
       to: user.email,
-      subject: "Reset your BillItUp password",
-      text: `Hi ${user.name},\n\nSomeone requested a password reset for your BillItUp account. If this was you, set a new password here (this link expires in 1 hour):\n\n${resetLink}\n\nIf you didn't request this, you can safely ignore this email.`,
+      subject: "Reset your TradeLedger password",
+      text: `Hi ${user.name},\n\nSomeone requested a password reset for your TradeLedger account. If this was you, set a new password here (this link expires in 1 hour):\n\n${resetLink}\n\nIf you didn't request this, you can safely ignore this email.`,
     });
   } catch (err) {
     // Don't leak SMTP-configuration state to the caller — just log it so

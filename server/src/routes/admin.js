@@ -59,7 +59,6 @@ function attentionReasons(b) {
   if (wentQuiet) reasons.push("inactive");
   if (b.cloud_backup_status === "error") reasons.push("backup_error");
   if (b.open_error_count > 0) reasons.push("has_errors");
-  if (b.open_ticket_count > 0) reasons.push("has_open_ticket");
   return reasons;
 }
 
@@ -90,7 +89,6 @@ router.get("/businesses", (req, res) => {
                 ELSE 'none'
               END AS cloud_backup_status,
               (SELECT COUNT(*) FROM error_log e WHERE e.business_id = b.id AND e.status = 'open') AS open_error_count,
-              (SELECT COUNT(*) FROM support_tickets t WHERE t.business_id = b.id AND t.status != 'resolved') AS open_ticket_count,
               (SELECT m.user_id FROM memberships m WHERE m.business_id = b.id AND m.role = 'owner' ORDER BY m.created_at LIMIT 1) AS owner_user_id,
               (SELECT u.email FROM memberships m JOIN users u ON u.id = m.user_id
                  WHERE m.business_id = b.id AND m.role = 'owner' ORDER BY m.created_at LIMIT 1) AS owner_login_email
@@ -145,8 +143,7 @@ router.get("/businesses/:id", (req, res) => {
                 WHEN EXISTS(SELECT 1 FROM cloud_backup_connections cbc WHERE cbc.business_id = b.id) THEN 'connected'
                 ELSE 'none'
               END AS cloud_backup_status,
-              (SELECT COUNT(*) FROM error_log e WHERE e.business_id = b.id AND e.status = 'open') AS open_error_count,
-              (SELECT COUNT(*) FROM support_tickets t WHERE t.business_id = b.id AND t.status != 'resolved') AS open_ticket_count
+              (SELECT COUNT(*) FROM error_log e WHERE e.business_id = b.id AND e.status = 'open') AS open_error_count
        FROM businesses b WHERE b.id = ?`
     )
     .get(req.params.id);
@@ -206,9 +203,8 @@ router.get("/businesses/:id/errors", (req, res) => {
 });
 
 // Every open-or-resolved error across every business, in one feed, newest
-// first, with the business name attached — the admin equivalent of the
-// cross-business Support inbox below, so Naveen can see what's actually
-// broken without opening each business's Health page one at a time. This is
+// first, with the business name attached, so errors can be reviewed without
+// opening each business's Health page one at a time. This is
 // what the Open Errors stat tile on the main Master Admin screen links to
 // (2026-09-16, Naveen pointed out the tile just showed a number with no way
 // to see or close what it counted).
@@ -227,18 +223,11 @@ router.get("/errors", (req, res) => {
 // Marking an error resolved (with an optional note on how) is the "history
 // of problem, status, and how we solved it" Naveen asked for — the row
 // itself becomes that history entry rather than needing a separate log.
-// Resolving used to be silent: the business had no way to know unless they
-// happened to open Support and check the System Health panel themselves. An
-// optional notify_message now posts straight into a new support ticket for
-// that business, the same channel they already use to talk to Naveen, so it
-// shows up in their Support inbox with the usual unread dot the moment it's
-// sent (2026-09-21). business_last_seen_at is set to NULL rather than left
-// at its default (which stamps "now"), otherwise the unread-count query
-// would treat this very first message as already seen and the "notification"
-// would never show as unread.
+// Resolution notes stay with the error record for the administrator's
+// reference.
 router.put("/errors/:id", (req, res) => {
   if (!checkAdminSecret(req, res)) return;
-  const { status, resolution_notes, notify_message } = req.body || {};
+  const { status, resolution_notes } = req.body || {};
   if (!["open", "resolved"].includes(status)) return res.status(400).json({ error: "Invalid status" });
   db.prepare(
     `UPDATE error_log SET status = ?, resolution_notes = ?, resolved_at = CASE WHEN ? = 'resolved' THEN datetime('now') ELSE NULL END
@@ -247,85 +236,6 @@ router.put("/errors/:id", (req, res) => {
   const updated = db.prepare("SELECT * FROM error_log WHERE id = ?").get(req.params.id);
   if (!updated) return res.status(404).json({ error: "Not found" });
 
-  if (status === "resolved" && notify_message && notify_message.trim() && updated.business_id) {
-    const ticketId = db
-      .prepare(
-        `INSERT INTO support_tickets (business_id, subject, status, business_last_seen_at) VALUES (?, ?, 'resolved', NULL)`
-      )
-      .run(updated.business_id, "An issue you reported has been fixed").lastInsertRowid;
-    db.prepare(`INSERT INTO support_messages (ticket_id, sender, sender_name, message) VALUES (?, 'admin', 'Naveen', ?)`)
-      .run(ticketId, notify_message.trim());
-  }
-
-  res.json(updated);
-});
-
-// One business's own support thread(s) — shown on their Business Health
-// page alongside the error log, so Naveen sees both what broke and what
-// they actually told him about it in one place.
-router.get("/businesses/:id/tickets", (req, res) => {
-  if (!checkAdminSecret(req, res)) return;
-  const rows = db
-    .prepare(
-      `SELECT t.*,
-              (SELECT COUNT(*) FROM support_messages m WHERE m.ticket_id = t.id
-                AND m.sender = 'business' AND m.created_at > COALESCE(t.admin_last_seen_at, '1970-01-01')) AS unread_count
-       FROM support_tickets t WHERE t.business_id = ? ORDER BY t.updated_at DESC`
-    )
-    .all(req.params.id);
-  res.json(rows);
-});
-
-// Every open conversation across every business, in one feed — the admin
-// equivalent of a support inbox, so Naveen doesn't have to open each
-// business's page just to see who's waiting on a reply.
-router.get("/support/tickets", (req, res) => {
-  if (!checkAdminSecret(req, res)) return;
-  const rows = db
-    .prepare(
-      `SELECT t.*, b.name AS business_name,
-              (SELECT COUNT(*) FROM support_messages m WHERE m.ticket_id = t.id
-                AND m.sender = 'business' AND m.created_at > COALESCE(t.admin_last_seen_at, '1970-01-01')) AS unread_count,
-              (SELECT message FROM support_messages m WHERE m.ticket_id = t.id ORDER BY m.created_at DESC LIMIT 1) AS last_message
-       FROM support_tickets t JOIN businesses b ON b.id = t.business_id
-       ORDER BY t.updated_at DESC`
-    )
-    .all();
-  res.json(rows);
-});
-
-router.get("/support/tickets/:id/messages", (req, res) => {
-  if (!checkAdminSecret(req, res)) return;
-  const messages = db
-    .prepare("SELECT * FROM support_messages WHERE ticket_id = ? ORDER BY created_at ASC")
-    .all(req.params.id);
-  db.prepare("UPDATE support_tickets SET admin_last_seen_at = datetime('now') WHERE id = ?").run(req.params.id);
-  res.json(messages);
-});
-
-router.post("/support/tickets/:id/messages", (req, res) => {
-  if (!checkAdminSecret(req, res)) return;
-  const { message } = req.body || {};
-  if (!message || !message.trim()) return res.status(400).json({ error: "message is required" });
-  const ticket = db.prepare("SELECT id FROM support_tickets WHERE id = ?").get(req.params.id);
-  if (!ticket) return res.status(404).json({ error: "Not found" });
-  db.prepare(`INSERT INTO support_messages (ticket_id, sender, sender_name, message) VALUES (?, 'admin', 'Naveen', ?)`)
-    .run(ticket.id, message.trim());
-  // A reply usually means work has started, not that it's already resolved
-  // — Naveen sets that explicitly with the status route below once it is.
-  db.prepare("UPDATE support_tickets SET status = CASE WHEN status = 'open' THEN 'in_progress' ELSE status END, updated_at = datetime('now'), admin_last_seen_at = datetime('now') WHERE id = ?")
-    .run(ticket.id);
-  const messages = db.prepare("SELECT * FROM support_messages WHERE ticket_id = ? ORDER BY created_at ASC").all(ticket.id);
-  res.status(201).json(messages);
-});
-
-router.put("/support/tickets/:id/status", (req, res) => {
-  if (!checkAdminSecret(req, res)) return;
-  const { status } = req.body || {};
-  if (!["open", "in_progress", "resolved"].includes(status)) return res.status(400).json({ error: "Invalid status" });
-  db.prepare("UPDATE support_tickets SET status = ?, updated_at = datetime('now') WHERE id = ?").run(status, req.params.id);
-  const updated = db.prepare("SELECT * FROM support_tickets WHERE id = ?").get(req.params.id);
-  if (!updated) return res.status(404).json({ error: "Not found" });
   res.json(updated);
 });
 
@@ -370,7 +280,6 @@ router.get("/stats", (req, res) => {
       "SELECT COUNT(DISTINCT business_id) AS n FROM login_events WHERE logged_in_at >= datetime('now', '-30 days')"
     ),
     openErrors: count("SELECT COUNT(*) AS n FROM error_log WHERE status = 'open'"),
-    openSupportTickets: count("SELECT COUNT(*) AS n FROM support_tickets WHERE status != 'resolved'"),
   });
 });
 

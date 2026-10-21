@@ -1,16 +1,9 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { api, setSession } from "../lib/api";
-import { IconInvoice, IconReports, IconCustomers } from "../components/Icons";
 
-// Redesigned 2026-09-15 as a split screen (brand story on the left, the
-// actual form on the right) instead of a single plain centered card — first
-// page in a page-by-page visual pass over the app, keeping the existing
-// navy/green/amber brand and every bit of the original logic untouched
-// (same api.login call, same expired-session banner, same links). Uses its
-// own login-* CSS classes rather than the shared .auth-page/.auth-card ones,
-// so Signup/ForgotPassword/ResetPassword/AdminLogin are unaffected until
-// their own turn in this redesign.
+// Login screen layout is intentionally compact; login-* styles keep it
+// separate from Signup and the other authentication pages.
 export default function Login() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -35,48 +28,10 @@ export default function Login() {
   };
 
   return (
-    <div className="login-shell">
-      <div className="login-brand-panel">
-        <div className="login-brand-mark">
-          <img src="/tradeledger-logo.svg" alt="TradeLedger" />
-        </div>
-
-        <h2 className="login-brand-tagline">
-          Invoicing built for <em>consultants, agencies and firms</em> who bill for their work, not their stock.
-        </h2>
-
-        <div className="login-feature-list">
-          <div className="login-feature-item">
-            <span className="login-feature-icon"><IconInvoice size={18} /></span>
-            <span className="login-feature-text">
-              <strong>GST-ready invoices</strong>
-              <span>Reverse charge, CGST/SGST/IGST, and the correct current tax slabs</span>
-            </span>
-          </div>
-          <div className="login-feature-item">
-            <span className="login-feature-icon"><IconReports size={18} /></span>
-            <span className="login-feature-text">
-              <strong>Reports that actually help</strong>
-              <span>GSTR-1, GSTR-3B, aging, and a library of 14 named reports</span>
-            </span>
-          </div>
-          <div className="login-feature-item">
-            <span className="login-feature-icon"><IconCustomers size={18} /></span>
-            <span className="login-feature-text">
-              <strong>A portal for your clients</strong>
-              <span>Give each customer their own login to check invoice status</span>
-            </span>
-          </div>
-        </div>
-
-        <div className="login-brand-footer">
-          <strong>Made with <span className="login-heart">&hearts;</span> in India</strong>&nbsp;· free &amp; open source ·{" "}
-          <Link to="/terms" style={{ color: "inherit" }}>Terms &amp; Privacy</Link>
-        </div>
-      </div>
-
-      <div className="login-form-panel">
+    <div className="login-page-shell">
+      <main className="login-page-main">
         <form className="login-form-card" onSubmit={handleSubmit}>
+          <img src="/tradeledger-logo.svg" alt="TradeLedger" className="login-form-logo" />
           <h1>Log in to TradeLedger</h1>
           <p className="login-subtitle">Enter your details to access your business.</p>
 
@@ -117,7 +72,10 @@ export default function Login() {
 
           <Link to="/signup" className="login-signup-cta">Set up TradeLedger</Link>
         </form>
-      </div>
+      </main>
+      <footer className="login-page-footer">
+        <Link to="/terms">Terms &amp; Privacy</Link>
+      </footer>
     </div>
   );
 }

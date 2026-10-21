@@ -143,9 +143,6 @@ export const api = {
   getBackupStatus: () => request("/api/business/backup-status"),
   backupNow: () => request("/api/business/backup-now", { method: "POST" }),
   deleteBusiness: (payload) => request("/api/business/delete", { method: "POST", body: payload }),
-  // This business's own copy of its technical error log, including resolved
-  // status. See Support.jsx's "System Health" panel (2026-09-20).
-  getMyErrors: () => request("/api/business/errors"),
 
   listCustomers: () => request("/api/customers"),
   createCustomer: (payload) => request("/api/customers", { method: "POST", body: payload }),
@@ -286,13 +283,6 @@ export const api = {
   restorePurchase: (id) => request(`/api/purchases/${id}/restore`, { method: "POST" }),
   permanentlyDeletePurchase: (id) => request(`/api/purchases/${id}/permanent`, { method: "DELETE" }),
   getBillablePurchases: (customerId) => request(`/api/purchases/billable?customer_id=${encodeURIComponent(customerId)}`),
-
-  // Support chat with Naveen — raise a problem, then reply back and forth
-  // on the same thread. See server/src/routes/support.js.
-  listMySupportTickets: () => request("/api/support"),
-  createSupportTicket: (subject, message) => request("/api/support", { method: "POST", body: { subject, message } }),
-  getSupportTicketMessages: (id) => request(`/api/support/${id}/messages`),
-  sendSupportMessage: (id, message) => request(`/api/support/${id}/messages`, { method: "POST", body: { message } }),
 
   // Announcements Naveen posts from Master Admin — shown as a popup once
   // per login. See server/src/routes/announcements.js.

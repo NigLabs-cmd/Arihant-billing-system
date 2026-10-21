@@ -22,21 +22,6 @@ router.get("/me", (req, res) => {
   res.json(business);
 });
 
-// This business's own view of its technical error log, the same rows
-// Master Admin's per-business "Errors" section reads (see routes/admin.js),
-// including whether each one has since been marked resolved and the note on
-// how, so a business can actually find out that something they hit got
-// fixed rather than that only ever showing up on Naveen's side (2026-09-20).
-// Any logged-in role can read it (same tier as the plain status field on an
-// invoice). It never reads any request body, query params, or client data,
-// same privacy guarantee as lib/errorLog.js.
-router.get("/errors", (req, res) => {
-  const rows = db
-    .prepare("SELECT * FROM error_log WHERE business_id = ? ORDER BY created_at DESC LIMIT 50")
-    .all(req.auth.businessId);
-  res.json(rows);
-});
-
 // Settings update: profile, tax, numbering prefixes, SMTP, and invoice branding.
 router.put("/me", requireRole("owner", "admin"), (req, res) => {
   const {
@@ -221,7 +206,7 @@ router.post("/backup-now", requireRole("owner"), async (_req, res) => {
 // business owns across every table, then cleans up the login(s) that only
 // ever had access to this one business. Guarded by password + typing the
 // business's exact name (same double-confirmation pattern as GitHub's repo
-// deletion), since there's no undo and no support desk to appeal to.
+// deletion), since there's no undo.
 //
 // Most tables reference businesses.id / invoices.id etc WITHOUT
 // ON DELETE CASCADE (see db.js), so this deletes in a careful, explicit

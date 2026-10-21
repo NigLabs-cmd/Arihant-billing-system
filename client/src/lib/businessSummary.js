@@ -11,7 +11,6 @@ export const ATTENTION_LABELS = {
   inactive: "Hasn't logged in for a while",
   backup_error: "Cloud backup is connected but failing",
   has_errors: "Has unresolved errors — open their health page",
-  has_open_ticket: "Waiting on a reply in Support",
 };
 
 // A plain, fully-labelled block instead of a raw table row — Naveen asked
@@ -37,7 +36,6 @@ export function buildBusinessSummary(b) {
     `Signed up: ${formatDateTime(b.created_at)}`,
     `Cloud backup: ${backupLine}`,
     `Open errors: ${b.open_error_count || 0}`,
-    `Open support conversations: ${b.open_ticket_count || 0}`,
     ...(b.attention?.length ? [`Needs attention: ${b.attention.map((r) => ATTENTION_LABELS[r] || r).join("; ")}`] : []),
   ].join("\n");
 }

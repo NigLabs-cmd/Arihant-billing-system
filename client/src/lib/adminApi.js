@@ -53,21 +53,11 @@ export const adminApi = {
   // out on purpose.
   getBusinessErrors: (businessId) => adminRequest(`/api/admin/businesses/${businessId}/errors`),
   listAllErrors: () => adminRequest("/api/admin/errors"),
-  setErrorStatus: (errorId, status, resolutionNotes, notifyMessage) =>
+  setErrorStatus: (errorId, status, resolutionNotes) =>
     adminRequest(`/api/admin/errors/${errorId}`, {
       method: "PUT",
-      body: { status, resolution_notes: resolutionNotes, notify_message: notifyMessage },
+      body: { status, resolution_notes: resolutionNotes },
     }),
-
-  // Support chat — one business's threads (for their Business Health page)
-  // and the cross-business inbox (for the main Master Admin screen).
-  getBusinessTickets: (businessId) => adminRequest(`/api/admin/businesses/${businessId}/tickets`),
-  listAllSupportTickets: () => adminRequest("/api/admin/support/tickets"),
-  getSupportTicketMessages: (ticketId) => adminRequest(`/api/admin/support/tickets/${ticketId}/messages`),
-  sendAdminSupportMessage: (ticketId, message) =>
-    adminRequest(`/api/admin/support/tickets/${ticketId}/messages`, { method: "POST", body: { message } }),
-  setSupportTicketStatus: (ticketId, status) =>
-    adminRequest(`/api/admin/support/tickets/${ticketId}/status`, { method: "PUT", body: { status } }),
 
   // Announcements — write one, it pops up for every business next login.
   listAnnouncements: () => adminRequest("/api/admin/announcements"),

@@ -198,9 +198,8 @@ export default function Customers() {
     }
   };
 
-  // A soft delete — the customer moves to Trash (see Support > ... no,
-  // Trash.jsx from the sidebar) rather than vanishing outright, so a
-  // misclick can always be undone (2026-09-20).
+  // A soft delete — the customer moves to Trash rather than vanishing
+  // outright, so a misclick can always be undone (2026-09-20).
   const confirmDelete = async () => {
     if (!deleteTarget) return;
     setDeleting(true);

@@ -23,7 +23,6 @@ import vendorsRouter from "./routes/vendors.js";
 import purchasesRouter from "./routes/purchases.js";
 import cloudBackupRouter from "./routes/cloudBackup.js";
 import clientErrorsRouter from "./routes/clientErrors.js";
-import supportRouter from "./routes/support.js";
 import announcementsRouter from "./routes/announcements.js";
 import zohoImportRouter from "./routes/zohoImport.js";
 import { startBackupSchedule } from "./lib/backup.js";
@@ -91,7 +90,6 @@ app.use("/api/vendors", vendorsRouter);
 app.use("/api/purchases", purchasesRouter);
 app.use("/api/cloud-backup", cloudBackupRouter);
 app.use("/api/client-errors", clientErrorsRouter);
-app.use("/api/support", supportRouter);
 app.use("/api/announcements", announcementsRouter);
 app.use("/api/zoho-import", zohoImportRouter);
 

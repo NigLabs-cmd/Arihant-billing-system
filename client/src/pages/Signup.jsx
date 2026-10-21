@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { api, setSession } from "../lib/api";
-import { IconInvoice, IconReports, IconCustomers } from "../components/Icons";
 
 const TOTAL_STEPS = 2;
 
 // Redesigned 2026-09-15 to match Login's split-screen shell — same
-// login-shell/login-brand-panel/login-form-panel classes, same brand story,
+// login-shell/login-brand-panel/login-form-panel classes and brand mark,
 // so a brand-new business's very first screen and their next login look
 // like the same product. Only the form panel differs: a 2-step wizard
 // instead of a single form, restyled onto login-field/login-submit rather
@@ -49,36 +48,7 @@ export default function Signup() {
           <img src="/tradeledger-logo.svg" alt="TradeLedger" />
         </div>
 
-        <h2 className="login-brand-tagline">
-          Set up your business in <em>under two minutes</em>, then start billing for your work, not your stock.
-        </h2>
-
-        <div className="login-feature-list">
-          <div className="login-feature-item">
-            <span className="login-feature-icon"><IconInvoice size={18} /></span>
-            <span className="login-feature-text">
-              <strong>GST-ready invoices</strong>
-              <span>Reverse charge, CGST/SGST/IGST, and the correct current tax slabs</span>
-            </span>
-          </div>
-          <div className="login-feature-item">
-            <span className="login-feature-icon"><IconReports size={18} /></span>
-            <span className="login-feature-text">
-              <strong>Reports that actually help</strong>
-              <span>GSTR-1, GSTR-3B, aging, and a library of 14 named reports</span>
-            </span>
-          </div>
-          <div className="login-feature-item">
-            <span className="login-feature-icon"><IconCustomers size={18} /></span>
-            <span className="login-feature-text">
-              <strong>A portal for your clients</strong>
-              <span>Give each customer their own login to check invoice status</span>
-            </span>
-          </div>
-        </div>
-
         <div className="login-brand-footer">
-          <strong>Made with <span className="login-heart">&hearts;</span> in India</strong>&nbsp;· free &amp; open source ·{" "}
           <Link to="/terms" style={{ color: "inherit" }}>Terms &amp; Privacy</Link>
         </div>
       </div>

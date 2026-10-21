@@ -27,7 +27,7 @@ const ALL_STEPS = [
     popover: {
       title: "Welcome to TradeLedger",
       description:
-        "A quick tour of the essentials before you send your first invoice. You can close this anytime and pick it up again later from Support.",
+        "A quick tour of the essentials before you send your first invoice. You can close this anytime.",
       side: "bottom",
       align: "start",
     },
@@ -110,11 +110,9 @@ function stepsForRole(role) {
   return ALL_STEPS.filter((step) => !step.ownerOnly || isOwnerOrAdmin);
 }
 
-// `navigate` is react-router's navigate() from whichever component starts
-// the tour (the Dashboard shell on first login, or the "Take a tour" button
-// on Support). Marks the tour seen once it's closed for any reason, Finish,
-// the close button, or Escape, so it never auto-pops again for this user;
-// replaying is always available again from Support.
+// `navigate` is react-router's navigate() from the Dashboard shell on first
+// login. Marks the tour seen once it's closed for any reason, Finish, the
+// close button, or Escape, so it never auto-pops again for this user.
 export function startTour(navigate, user) {
   const steps = stepsForRole(user?.role);
   if (steps.length === 0) return;

@@ -5,10 +5,10 @@ import { formatDateTime, formatMoney } from "../lib/format";
 import { ATTENTION_LABELS } from "../lib/businessSummary";
 import {
   IconTrash, IconBuilding, IconReports, IconCloud, IconTeam,
-  IconInvoice, IconDashboard, IconChat, IconAnnouncement, IconAlert,
+  IconInvoice, IconDashboard, IconAnnouncement, IconAlert,
 } from "../components/Icons";
 import ConfirmDialog from "../components/ConfirmDialog";
-import { AdminTicketThread, ErrorRow } from "./BusinessHealth";
+import { ErrorRow } from "./BusinessHealth";
 
 // The one super-admin screen — everything Naveen, as the creator of the
 // software, needs to keep an eye on this install from a single place: how
@@ -36,7 +36,6 @@ const STAT_TILES = [
   { key: "loginsToday", label: "Logins Today", icon: IconDashboard },
   { key: "loginsThisWeek", label: "Logins This Week", icon: IconCloud },
   { key: "openErrors", label: "Open Errors", icon: IconAlert, attentionIfPositive: true, tab: "errors" },
-  { key: "openSupportTickets", label: "Support Waiting", icon: IconChat, attentionIfPositive: true, tab: "support" },
 ];
 
 function SectionHeader({ icon: Icon, title, description, badge }) {
@@ -55,8 +54,6 @@ export default function AdminPanel() {
   const navigate = useNavigate();
   const [businesses, setBusinesses] = useState(null);
   const [stats, setStats] = useState(null);
-  const [tickets, setTickets] = useState(null);
-  const [expandedTicketId, setExpandedTicketId] = useState(null);
   const [allErrors, setAllErrors] = useState(null);
   const [errorStatusFilter, setErrorStatusFilter] = useState("open");
   const [announcements, setAnnouncements] = useState(null);
@@ -74,14 +71,12 @@ export default function AdminPanel() {
     Promise.all([
       adminApi.listBusinesses(),
       adminApi.getStats(),
-      adminApi.listAllSupportTickets(),
       adminApi.listAllErrors(),
       adminApi.listAnnouncements(),
     ])
-      .then(([businessRows, statsData, ticketRows, errorRows, announcementRows]) => {
+      .then(([businessRows, statsData, errorRows, announcementRows]) => {
         setBusinesses(businessRows);
         setStats(statsData);
-        setTickets(ticketRows);
         setAllErrors(errorRows);
         setAnnouncements(announcementRows);
       })
@@ -97,9 +92,8 @@ export default function AdminPanel() {
       return;
     }
     load();
-    // Poll so a new business, support message, or
-    // announcement shows up on its own — nobody should have to hit refresh
-    // to notice something changed on this page (2026-09-16).
+    // Poll so a new business or announcement shows up on its own — nobody
+    // should have to hit refresh to notice something changed on this page.
     const interval = setInterval(load, 20000);
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -260,14 +254,6 @@ export default function AdminPanel() {
           </button>
           <button
             type="button"
-            className={`tab-btn${activeTab === "support" ? " active" : ""}`}
-            onClick={() => setActiveTab("support")}
-          >
-            <IconChat size={16} /> Support
-            {stats.openSupportTickets > 0 && <span className="tab-btn-badge">{stats.openSupportTickets}</span>}
-          </button>
-          <button
-            type="button"
             className={`tab-btn${activeTab === "errors" ? " active" : ""}`}
             onClick={() => setActiveTab("errors")}
           >
@@ -367,45 +353,6 @@ export default function AdminPanel() {
                   })}
                 </tbody>
               </table>
-            )}
-          </div>
-        </div>
-        )}
-
-        {activeTab === "support" && (
-        <div className="admin-section">
-          <SectionHeader
-            icon={IconChat}
-            title="Support Requests"
-            description="Problems raised directly by businesses, across the whole install. Click one to open the conversation."
-          />
-          <div className="admin-table-card">
-            {tickets.length === 0 ? (
-              <p className="muted">No support conversations yet.</p>
-            ) : (
-              <div className="support-ticket-list support-ticket-list-wide">
-                {tickets.map((t) => (
-                  <div key={t.id}>
-                    <button
-                      type="button"
-                      className={`support-ticket-item${expandedTicketId === t.id ? " active" : ""}`}
-                      onClick={() => setExpandedTicketId((cur) => (cur === t.id ? null : t.id))}
-                    >
-                      <div className="support-ticket-item-top">
-                        <span><strong>{t.business_name}</strong> — {t.subject}</span>
-                        {t.unread_count > 0 && <span className="support-unread-dot" title={`${t.unread_count} new message`} />}
-                      </div>
-                      <div className="support-ticket-item-bottom">
-                        <span className={`badge support-status-${t.status}`}>
-                          {t.status === "open" ? "Open" : t.status === "in_progress" ? "In progress" : "Resolved"}
-                        </span>
-                        <span className="muted">{formatDateTime(t.updated_at)}</span>
-                      </div>
-                    </button>
-                    {expandedTicketId === t.id && <AdminTicketThread ticket={t} onUpdated={load} />}
-                  </div>
-                ))}
-              </div>
             )}
           </div>
         </div>

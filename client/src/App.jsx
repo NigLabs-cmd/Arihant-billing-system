@@ -3,7 +3,7 @@ import { Routes, Route, Navigate, Link, NavLink, useNavigate } from "react-route
 import {
   IconDashboard, IconQuote, IconCreditNote, IconRecurring,
   IconCustomers, IconItems, IconReports, IconSettings, IconLogout, IconChevron,
-  IconVendors, IconPurchases, IconPayments, IconChat, IconTrash,
+  IconVendors, IconPurchases, IconPayments, IconTrash,
 } from "./components/Icons";
 import AnnouncementPopup from "./components/AnnouncementPopup";
 import Signup from "./pages/Signup";
@@ -11,7 +11,6 @@ import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import TermsAndPrivacy from "./pages/TermsAndPrivacy";
-import Landing from "./pages/Landing";
 import AddFirm from "./pages/AddFirm";
 import Dashboard from "./pages/Dashboard";
 import Customers from "./pages/Customers";
@@ -35,7 +34,6 @@ import PaymentsTimeline from "./pages/PaymentsTimeline";
 import Vendors from "./pages/Vendors";
 import Purchases from "./pages/Purchases";
 import Reports from "./pages/Reports";
-import Support from "./pages/Support";
 import Settings from "./pages/Settings";
 import AdminLogin from "./pages/AdminLogin";
 import AdminPanel from "./pages/AdminPanel";
@@ -49,14 +47,9 @@ function RequireAuth({ children }) {
   return children;
 }
 
-// "/" used to always require login and bounce a logged-out visitor straight
-// to /login — fine while BillItUp was only ever opened by someone who
-// already had an account, but billitup.in is a real public URL now. A
-// logged-out visitor gets the marketing page; a logged-in user still lands
-// on their Dashboard exactly as before (2026-09-15).
 function Home() {
   const user = getUser();
-  if (!user) return <Landing />;
+  if (!user) return <Navigate to="/login" replace />;
   return (
     <Shell>
       <Dashboard />
@@ -75,7 +68,6 @@ const NAV_ITEMS = [
   { to: "/customers", label: "Customers", icon: IconCustomers },
   { to: "/items", label: "Items", icon: IconItems },
   { to: "/reports", label: "Reports", icon: IconReports, ownerOnly: true },
-  { to: "/support", label: "Support", icon: IconChat },
   { to: "/trash", label: "Trash", icon: IconTrash, ownerOnly: true },
   { to: "/settings", label: "Settings", icon: IconSettings, ownerOnly: true },
 ];
@@ -123,20 +115,6 @@ function Shell({ children }) {
   const [collapsed, setCollapsed] = useState(() => {
     try { return localStorage.getItem("billitup_sidebar_collapsed") === "1"; } catch { return false; }
   });
-  const [unreadSupportCount, setUnreadSupportCount] = useState(0);
-
-  // A one-time check (not polling) for unread replies on this business's own
-  // Support conversations, including the notice a Master Admin resolve now
-  // posts there, so a dot on the sidebar link actually catches someone's eye
-  // instead of the reply only surfacing once they happen to open Support on
-  // their own (2026-09-21).
-  useEffect(() => {
-    if (!user) return;
-    api.listMySupportTickets()
-      .then((tickets) => setUnreadSupportCount(tickets.reduce((sum, t) => sum + (t.unread_count || 0), 0)))
-      .catch(() => {});
-  }, []);
-
   const toggleCollapsed = () => {
     setCollapsed((prev) => {
       const next = !prev;
@@ -177,9 +155,6 @@ function Shell({ children }) {
             >
               <Icon />
               <span className="sidebar-link-label">{label}</span>
-              {to === "/support" && unreadSupportCount > 0 && (
-                <span className="support-unread-dot" style={{ marginLeft: "auto" }} title={`${unreadSupportCount} new reply`} />
-              )}
             </NavLink>
           ))}
         </nav>
@@ -256,7 +231,6 @@ export default function App() {
       <Route path="/vendors" element={<RequireAuth><Shell><Vendors /></Shell></RequireAuth>} />
       <Route path="/purchases" element={<RequireAuth><Shell><Purchases /></Shell></RequireAuth>} />
       <Route path="/reports" element={<RequireAuth><Shell><Reports /></Shell></RequireAuth>} />
-      <Route path="/support" element={<RequireAuth><Shell><Support /></Shell></RequireAuth>} />
       <Route path="/settings" element={<RequireAuth><Shell><Settings /></Shell></RequireAuth>} />
       <Route path="/add-firm" element={<RequireAuth><Shell><AddFirm /></Shell></RequireAuth>} />
     </Routes>
